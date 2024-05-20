@@ -13,7 +13,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # MongoDB connection setup
-client = MongoClient("mongodb://localhost:27017/")
+client = MongoClient("mongodb+srv://test:test@cluster0.q9llhnj.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
 db = client['quiz_bot']
 chat_jobs_collection = db['chat_jobs']
 user_scores_collection = db['user_scores']
