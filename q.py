@@ -53,7 +53,7 @@ async def send_quiz_question(client, chat_id):
         "chat_id": chat_id,
         "correct_option_id": options.index(question_data['correct_answer'])
     }
-def start_quiz_job(client, chat_id, interval=10):
+def start_quiz_job(client, chat_id, interval=1):
     """Start a job to send quiz questions every 'interval' minutes."""
     if chat_id in client.chat_jobs:
         client.chat_jobs[chat_id].remove()
