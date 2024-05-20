@@ -16,13 +16,20 @@ async def download_and_send_video(client, message):
     terabox_link = message.text.strip()
     response = requests.get(terabox_link)
     if response.status_code == 200:
-        video_url = response.json()['data']['download_link']
-        video_filename = 'video.mp4'
-        with open(video_filename, 'wb') as f:
-            f.write(requests.get(video_url).content)
-        await client.send_video(chat_id, video_filename)
-        os.remove(video_filename)
+        try:
+            data = response.json()
+            video_url = data['data']['download_link']
+            video_filename = 'video.mp4'
+            with open(video_filename, 'wb') as f:
+                f.write(requests.get(video_url).content)
+            await client.send_video(chat_id, video_filename)
+            os.remove(video_filename)
+        except Exception as e:
+            print("Error:", e)
+            print("Response content:", response.content)
+            await message.reply_text("Error: Unable to fetch video from Terabox link.")
     else:
         await message.reply_text("Error: Unable to fetch video from Terabox link.")
 
+app.run()
 app.run()
