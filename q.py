@@ -22,23 +22,31 @@ async def download_and_send_video(client, message):
 
     options = Options()
     options.headless = True
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+    options.add_argument('--disable-gpu')
+    options.add_argument('--remote-debugging-port=9222')
+    options.add_argument('--window-size=1920,1080')
+
     driver = webdriver.Chrome(options=options)
 
-    driver.get(terabox_link)
+    try:
+        driver.get(terabox_link)
 
-    # Add cookies for authentication
-    for cookie_pair in cookie.split('; '):
-        name, value = cookie_pair.split('=', 1)
-        driver.add_cookie({'name': name, 'value': value})
+        # Add cookies for authentication
+        for cookie_pair in cookie.split('; '):
+            name, value = cookie_pair.split('=', 1)
+            driver.add_cookie({'name': name, 'value': value})
 
-    driver.get(terabox_link)  # Reload to apply cookies
+        driver.get(terabox_link)  # Reload to apply cookies
 
-    # Wait for the page to load and find the download button
-    driver.implicitly_wait(10)
-    download_button = driver.find_element_by_xpath('//a[contains(@class, "download-button")]')
-    download_link = download_button.get_attribute('href')
+        # Wait for the page to load and find the download button
+        driver.implicitly_wait(10)
+        download_button = driver.find_element_by_xpath('//a[contains(@class, "download-button")]')
+        download_link = download_button.get_attribute('href')
 
-    driver.quit()
+    finally:
+        driver.quit()
 
     if download_link:
         video_filename = 'video.mp4'
