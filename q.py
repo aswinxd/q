@@ -35,7 +35,6 @@ def fetch_quiz_question():
     return question
     
 #@app.on_raw_update()
-#async
 async def send_quiz_question(client, chat_id):
     """Send a quiz question to the chat."""
     question_data = fetch_quiz_question()
@@ -53,11 +52,12 @@ async def send_quiz_question(client, chat_id):
         "chat_id": chat_id,
         "correct_option_id": options.index(question_data['correct_answer'])
     }
-def start_quiz_job(client, chat_id, interval=1):
+
+def start_quiz_job(client, chat_id, interval=10):
     """Start a job to send quiz questions every 'interval' minutes."""
     if chat_id in client.chat_jobs:
         client.chat_jobs[chat_id].remove()
-    job = scheduler.add_job(send_quiz_question, 'interval', minutes=interval, args=[client, chat_id])
+    job = scheduler.add_job(lambda: asyncio.run(send_quiz_question(client, chat_id)), 'interval', minutes=interval)
     client.chat_jobs[chat_id] = job
 
     # Save the job to MongoDB
@@ -65,8 +65,7 @@ def start_quiz_job(client, chat_id, interval=1):
         {"chat_id": chat_id},
         {"$set": {"chat_id": chat_id, "interval": interval}},
         upsert=True
-    )
-
+)
 
 @app.on_message(filters.command("start"))
 async def start(client, message: Message):
