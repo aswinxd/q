@@ -103,7 +103,7 @@ async def leaderboard(client, message: Message):
     await message.reply(f"Leaderboard:\n{leaderboard_text}")
 
 
-@app.@app.on_raw_update()
+@app.on_raw_update()
 async def handle_raw_update(client, update, users, chats):
     if getattr(update, "poll_answer", None):
         poll_answer = update.poll_answer
