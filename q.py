@@ -120,7 +120,7 @@ async def send_feedback(client, message: Message):
     """Handle feedback from users."""
     feedback_message = " ".join(message.command[1:])
     if feedback_message:
-        await client.send_message(YOUR_ADMIN_CHAT_ID, f"Feedback from {message.from_user.id}:\n{feedback_message}")
+        await client.send_message(-1001535538162, f"Feedback from {message.from_user.id}:\n{feedback_message}")
         await message.reply("Thank you for your feedback!")
     else:
         await message.reply("Usage: /feedback <message>")
