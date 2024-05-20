@@ -105,7 +105,7 @@ async def leaderboard(client, message: Message):
 
 @app.on_raw_update()
 async def handle_raw_update(client, update, users, chats):
-    if update._ == "UpdatePollAnswer":
+    if update.poll_answer:
         poll_answer = update.poll_answer
         poll_id = poll_answer.poll_id
         selected_option = poll_answer.option_ids[0]
@@ -120,7 +120,7 @@ async def handle_raw_update(client, update, users, chats):
                     {"chat_id": chat_id},
                     {"$inc": {f"scores.{user_id}": 1}},
                     upsert=True
-                )
+    )
                 
 @app.on_message(filters.command("feedback"))
 async def send_feedback(client, message: Message):
