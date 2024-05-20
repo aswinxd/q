@@ -103,9 +103,9 @@ async def leaderboard(client, message: Message):
     await message.reply(f"Leaderboard:\n{leaderboard_text}")
 
 
-@app.on_raw_update()
+@app.@app.on_raw_update()
 async def handle_raw_update(client, update, users, chats):
-    if update.poll_answer:
+    if getattr(update, "poll_answer", None):
         poll_answer = update.poll_answer
         poll_id = poll_answer.poll_id
         selected_option = poll_answer.option_ids[0]
@@ -121,7 +121,6 @@ async def handle_raw_update(client, update, users, chats):
                     {"$inc": {f"scores.{user_id}": 1}},
                     upsert=True
     )
-                
 @app.on_message(filters.command("feedback"))
 async def send_feedback(client, message: Message):
     """Handle feedback from users."""
