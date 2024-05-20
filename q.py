@@ -14,7 +14,11 @@ app = Client("my_bot", api_id=api_id, api_hash=api_hash, bot_token=bot_token)
 @app.on_message(filters.private & filters.regex(r'https://teraboxapp.com/s/'))
 async def download_and_send_video(client, message):
     terabox_link = message.text.strip()
-    response = requests.get(terabox_link)
+    headers = {
+        'User-Agent': 'Your User Agent',  # replace with your user agent
+        'Cookie': 'your_cookie_name=your_cookie_value'  # replace with your cookie
+    }
+    response = requests.get(terabox_link, headers=headers)
     if response.status_code == 200:
         try:
             data = response.json()
@@ -30,6 +34,5 @@ async def download_and_send_video(client, message):
             await message.reply_text("Error: Unable to fetch video from Terabox link.")
     else:
         await message.reply_text("Error: Unable to fetch video from Terabox link.")
-
-app.run()
+    
 app.run()
