@@ -34,25 +34,8 @@ def fetch_quiz_question():
     question = data['results'][0]
     return question
     
-@app.on_raw_update()
-async def handle_raw_update(client, update, users, chats):
-    if update._ == "UpdatePollAnswer":
-        poll_answer = update.poll_answer
-        poll_id = poll_answer.poll_id
-        selected_option = poll_answer.option_ids[0]
-        user_id = poll_answer.user_id
-
-        if poll_id in client.poll_data:
-            chat_id = client.poll_data[poll_id]['chat_id']
-            correct_option_id = client.poll_data[poll_id]['correct_option_id']
-
-            if selected_option == correct_option_id:
-                user_scores_collection.update_one(
-                    {"chat_id": chat_id},
-                    {"$inc": {f"scores.{user_id}": 1}},
-                    upsert=True
-    )
-                
+#@app.on_raw_update()
+#async
 async def send_quiz_question(client, chat_id):
     """Send a quiz question to the chat."""
     question_data = fetch_quiz_question()
@@ -119,22 +102,24 @@ async def leaderboard(client, message: Message):
     leaderboard_text = "\n".join([f"{user}: {score}" for user, score in sorted(scores['scores'].items(), key=lambda item: item[1], reverse=True)])
     await message.reply(f"Leaderboard:\n{leaderboard_text}")
 
-@app.on_poll_answer()
-async def handle_poll_answer(client, poll_answer):
-    """Handle poll answers to update scores."""
-    poll_id = poll_answer.poll_id
-    selected_option = poll_answer.option_ids[0]
-    user = poll_answer.user.id
-    chat_id = client.poll_data[poll_id]['chat_id']
-    correct_option_id = client.poll_data[poll_id]['correct_option_id']
+ def handle_raw_update(client, update, users, chats):
+    if update._ == "UpdatePollAnswer":
+        poll_answer = update.poll_answer
+        poll_id = poll_answer.poll_id
+        selected_option = poll_answer.option_ids[0]
+        user_id = poll_answer.user_id
 
-    if selected_option == correct_option_id:
-        user_scores_collection.update_one(
-            {"chat_id": chat_id},
-            {"$inc": {f"scores.{user}": 1}},
-            upsert=True
-        )
+        if poll_id in client.poll_data:
+            chat_id = client.poll_data[poll_id]['chat_id']
+            correct_option_id = client.poll_data[poll_id]['correct_option_id']
 
+            if selected_option == correct_option_id:
+                user_scores_collection.update_one(
+                    {"chat_id": chat_id},
+                    {"$inc": {f"scores.{user_id}": 1}},
+                    upsert=True
+    )
+                
 @app.on_message(filters.command("feedback"))
 async def send_feedback(client, message: Message):
     """Handle feedback from users."""
