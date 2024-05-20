@@ -102,7 +102,9 @@ async def leaderboard(client, message: Message):
     leaderboard_text = "\n".join([f"{user}: {score}" for user, score in sorted(scores['scores'].items(), key=lambda item: item[1], reverse=True)])
     await message.reply(f"Leaderboard:\n{leaderboard_text}")
 
- def handle_raw_update(client, update, users, chats):
+
+@app.on_raw_update()
+async def handle_raw_update(client, update, users, chats):
     if update._ == "UpdatePollAnswer":
         poll_answer = update.poll_answer
         poll_id = poll_answer.poll_id
@@ -118,7 +120,7 @@ async def leaderboard(client, message: Message):
                     {"chat_id": chat_id},
                     {"$inc": {f"scores.{user_id}": 1}},
                     upsert=True
-    )
+                )
                 
 @app.on_message(filters.command("feedback"))
 async def send_feedback(client, message: Message):
@@ -129,6 +131,7 @@ async def send_feedback(client, message: Message):
         await message.reply("Thank you for your feedback!")
     else:
         await message.reply("Usage: /feedback <message>")
+
 
 def load_chat_jobs(client):
     """Load chat jobs from MongoDB on startup."""
