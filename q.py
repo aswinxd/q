@@ -2,7 +2,7 @@ import logging
 import requests
 from pymongo import MongoClient
 from pyrogram import Client, filters
-from pyrogram.types import Message, Poll, PollType
+from pyrogram.types import Message, Poll
 from apscheduler.schedulers.background import BackgroundScheduler
 
 # Enable logging
@@ -44,14 +44,13 @@ async def send_quiz_question(client, chat_id):
         question,
         options,
         is_anonymous=False,
-        type=PollType.QUIZ,
+        type='quiz',
         correct_option_id=options.index(question_data['correct_answer'])
     )
     client.poll_data[poll.poll.id] = {
         "chat_id": chat_id,
         "correct_option_id": options.index(question_data['correct_answer'])
     }
-
 def start_quiz_job(client, chat_id, interval=10):
     """Start a job to send quiz questions every 'interval' minutes."""
     if chat_id in client.chat_jobs:
